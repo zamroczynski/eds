@@ -13,9 +13,13 @@
     text-shadow: 0 0.04em 0.04em rgba(0,0,0,0.35);
     text-align:center;
     transition: all 0.2s;
-    background-color:#f14e4e
+    background-color:#e92525
 }
 .button4:hover
 {
     border-color: rgba(255,255,255,1);
+}
+.change-date-button
+{
+    font-size: 13px;
 }

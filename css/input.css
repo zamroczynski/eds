@@ -1,0 +1,14 @@
+.input-login
+{
+    margin: 0 0 10px 0;
+    border-radius: 15%;
+    ;
+}
+.input-login::placeholder
+{
+    text-align: center;
+}
+.date-to-change
+{
+    font-size: 13px;
+}

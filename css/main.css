@@ -7,6 +7,16 @@ body
     margin: 0;
     padding: 0;
 }
+a
+{
+    color: #FFF;
+    text-decoration: none;
+}
+a:hover
+{
+    color: #FFF;
+    text-decoration: none;
+}
 .main-logo
 {
     text-align: center;
@@ -20,6 +30,10 @@ body
 .separator-bottom
 {
     border-bottom: #960303 solid 3px;
+}
+.separator-top
+{
+    border-top: #960303 solid 3px;
 }
 .whoiswho
 {
@@ -42,4 +56,18 @@ body
 .product
 {
     line-height: 250%;
+}
+.login-panel
+{
+    text-align: center;
+    padding: 20px 0 20px 0;
+}
+.error
+{
+    color: #b90808;
+    font-weight: 600;
+}
+.change-date
+{
+    padding-top: 20px;
 }
