@@ -48,7 +48,7 @@
                 $today = new DateTime();
                 $today_string = $today->format('Y-m-d H:i:s');
                 $db->query('UPDATE employees SET last_login="'.$today_string.'"');
-                header('Location: user_profile.php');
+                header('Location: main_page.php');
                 exit();
             }
         }

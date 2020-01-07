@@ -30,6 +30,8 @@ a:hover
 .separator-bottom
 {
     border-bottom: #960303 solid 3px;
+    margin-bottom: 10px;
+    padding-bottom: 10px;
 }
 .separator-top
 {
@@ -70,4 +72,8 @@ a:hover
 .change-date
 {
     padding-top: 20px;
+}
+.hello
+{
+    text-align: center;
 }
