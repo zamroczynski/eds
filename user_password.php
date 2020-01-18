@@ -6,13 +6,26 @@
         header('Location: index.php');
         exit();
     }
-    if ($_SESSION['user_power'] >= 7)
+    if (isset($_POST['old_password']))
     {
-        $edit_employees = '<a class="dropdown-item" href="user_edit.php">Edycja danych pracowników</a>';
-    }
-    else
-    {
-        $edit_employees = '';
+        if (password_verify($_POST['old_password'],$_SESSION['user_pass']))
+        {
+            if($_POST['new1_password']==$_POST['new2_password'])
+            {
+                $password_hash = password_hash($_POST['new1_password'], PASSWORD_DEFAULT);
+                $query = $db->prepare('UPDATE employees SET pass="'.$password_hash.'" WHERE id='.$_SESSION['user_id']);
+                $query->execute();
+                $_SESSION['success'] = '<div class="success">Hasło zostało zmienione</div>';
+            }
+            else
+            {
+                $_SESSION['error'] = '<div class="error">Nowe hasła nie są takie same!</div>';
+            }
+        }
+        else
+        {
+            $_SESSION['error'] = '<div class="error">Błędne stare hasło!</div>';
+        }
     }
 ?>
 <!DOCTYPE HTML>
@@ -86,8 +99,8 @@
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle active" href="#" data-toggle="dropdown" role="button">Profil</a>
                             <div class="dropdown-menu">
-                                <a class="dropdown-item active" href="user_profile.php">Mój profil</a>
-                                <a class="dropdown-item" href="user_password.php">Zmień hasło</a>
+                                <a class="dropdown-item" href="user_profile.php">Mój profil</a>
+                                <a class="dropdown-item active" href="user_password.php">Zmień hasło</a>
                                 <?= $edit_employees ?>
                             </div>
                         </li>
@@ -107,27 +120,26 @@
         <main>
             <div class="container-fluid zero-padding separator-bottom">
                 <div class="row">
-                    <div class="col-sm-12">
-                        <div class="hello">
-                            <h2>Witaj <?= $_SESSION['user_name'] ?></h2>
-                        </div>
-                        <div class="hello">
-                            Twoje uprawnienia: 
-                            <?php
-                                if($_SESSION['user_power'] == 10) echo 'Administrator';
-                                if($_SESSION['user_power'] == 9) echo 'Poszukiwacz błędów';
-                                if($_SESSION['user_power'] == 8) echo 'Prowadzący Stacje';
-                                if($_SESSION['user_power'] == 7) echo 'Zastępca PSP';
-                                if($_SESSION['user_power'] == 6) echo 'Instruktor';
-                                if($_SESSION['user_power'] == 4) echo 'Prowadzący zmianę';
-                                if($_SESSION['user_power'] == 2) echo 'Pracownik';
-                                if($_SESSION['user_power'] == 1) echo 'Nowy Pracownik';
-                                if($_SESSION['user_power'] == 0) echo 'Gość';
-                            ?>
-                        </div>
-                        <div class="hello">
-                            Ostatnie logowanie: <?= $_SESSION['user_last_login'] ?>
-                        </div>
+                    <div class="col-sm-12 hello">
+                        <h1>Zmiana Hasła</h1>
+                        <form method="POST">
+                            <div><input type="password" name="old_password" placeholder="Stare hasło" class="input-login" required></div>
+                            <div><input type="password" name="new1_password" placeholder="Nowe hasło" class="input-login" required></div>
+                            <div><input type="password" name="new2_password" placeholder="Powtórz nowe hasło" class="input-login" required></div>
+                            <input type="submit" value="Zmień hasło" class="button4">
+                        </form>
+                        <?php
+                            if (isset($_SESSION['error']))
+                            {
+                                echo $_SESSION['error'];
+                                unset($_SESSION['error']);
+                            }
+                            if (isset($_SESSION['success']))
+                            {
+                                echo $_SESSION['success'];
+                                unset($_SESSION['success']);
+                            }
+                        ?>
                     </div>
                 </div>
             </div>
