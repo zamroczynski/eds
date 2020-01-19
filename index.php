@@ -47,7 +47,7 @@
                 $_SESSION['user_phone_number'] = $user['phone_number'];
                 $today = new DateTime();
                 $today_string = $today->format('Y-m-d H:i:s');
-                $db->query('UPDATE employees SET last_login="'.$today_string.'"');
+                $db->query('UPDATE employees SET last_login="'.$today_string.'" WHERE id='.$_SESSION['user_id']);
                 header('Location: main_page.php');
                 exit();
             }
