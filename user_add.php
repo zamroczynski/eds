@@ -6,15 +6,48 @@
         header('Location: index.php');
         exit();
     }
-    if ($_SESSION['user_power'] >= 7)
+    if ($_SESSION['user_power'] < 7)
     {
-        $add_employees = '<a class="dropdown-item" href="user_add.php">Dodanie nowego pracownika</a>';
-        $edit_employees = '<a class="dropdown-item" href="user_edit.php">Edycja danych pracowników</a>';
+        header('Location: main_page.php');
+        exit();
     }
-    else
+    if (isset($_POST['form']))
     {
-        $add_employees = '';
-        $edit_employees = '';
+        if (strlen($_POST['employees_name']))
+        {
+            if (strlen($_POST['employees_login']))
+            {
+                if (strlen($_POST['employees_pass']))
+                {
+                    $query_login = $db->prepare('SELECT login FROM employees WHERE login="'.$_POST['employees_login'].'"');
+                    $query_login->execute();
+                    if ($query_login->rowCount())
+                    {
+                        $_SESSION['error'] = '<div class="error">Istnieje już taki login!</div>';
+                    }
+                    else
+                    {
+                        $password_hash = password_hash($_POST['employees_pass'], PASSWORD_DEFAULT);
+                        $query_add = $db->prepare('INSERT INTO employees 
+                        VALUES (null, "'.$_POST['employees_login'].'", "'.$password_hash.'", "'.$_POST['employees_email'].'", "'.$_POST['employees_name'].'", 1, "'.$_POST['employees_number'].'", null);');
+                        $query_add->execute();
+                        $_SESSION['success'] = '<div class="success">Dodano nowego pracownika!</div>';
+                    }
+                }
+                else
+                {
+                    $_SESSION['error'] = '<div class="error">Pole "Hasło" jest obowiązkowe!</div>';
+                }
+            }
+            else
+            {
+                $_SESSION['error'] = '<div class="error">Pole "Login" jest obowiązkowe!</div>';
+            }
+        }
+        else
+        {
+            $_SESSION['error'] = '<div class="error">Pole "Imię i nazwisko" jest obowiązkowe!</div>';
+        }
     }
 ?>
 <!DOCTYPE HTML>
@@ -88,10 +121,10 @@
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle active" href="#" data-toggle="dropdown" role="button">Profil</a>
                             <div class="dropdown-menu">
-                                <a class="dropdown-item active" href="user_profile.php">Mój profil</a>
+                                <a class="dropdown-item" href="user_profile.php">Mój profil</a>
                                 <a class="dropdown-item" href="user_password.php">Zmień hasło</a>
-                                <?= $add_employees ?>
-                                <?= $edit_employees ?>
+                                <a class="dropdown-item active" href="user_add.php">Dodanie nowego pracownika</a>
+                                <a class="dropdown-item" href="user_edit.php">Edycja danych pracowników</a>
                             </div>
                         </li>
                         <li class="nav-item dropdown">
@@ -112,24 +145,28 @@
                 <div class="row">
                     <div class="col-sm-12">
                         <div class="hello">
-                            <h2>Witaj <?= $_SESSION['user_name'] ?></h2>
-                        </div>
-                        <div class="hello">
-                            Twoje uprawnienia: 
+                            <h2>Dodawanie nowego pracownika</h2>
+                        
+                            <form method="POST">
+                                <p><input type="text" name="employees_name" class="pretty-input" placeholder="Imię i nazwisko" /></p>
+                                <p><input type="text" name="employees_login" class="pretty-input" placeholder="Login" /></p>
+                                <p><input type="text" name="employees_pass" class="pretty-input" placeholder="Hasło" /></p>
+                                <p><input type="text" name="employees_email" class="pretty-input" placeholder="Email" /></p>
+                                <p><input type="text" name="employees_number" class="pretty-input" placeholder="Numer Telefonu" /></p>
+                                <p><input type="submit" value="Dodaj Pracownika" class="pretty-submit" name="form" />
+                            </form>
                             <?php
-                                if($_SESSION['user_power'] == 10) echo 'Administrator';
-                                if($_SESSION['user_power'] == 9) echo 'Poszukiwacz błędów';
-                                if($_SESSION['user_power'] == 8) echo 'Prowadzący Stacje';
-                                if($_SESSION['user_power'] == 7) echo 'Zastępca PSP';
-                                if($_SESSION['user_power'] == 6) echo 'Instruktor';
-                                if($_SESSION['user_power'] == 4) echo 'Prowadzący zmianę';
-                                if($_SESSION['user_power'] == 2) echo 'Pracownik';
-                                if($_SESSION['user_power'] == 1) echo 'Nowy Pracownik';
-                                if($_SESSION['user_power'] == 0) echo 'Gość';
+                                if(isset($_SESSION['error']))
+                                {
+                                    echo $_SESSION['error'];
+                                    unset($_SESSION['error']);
+                                }
+                                if(isset($_SESSION['success']))
+                                {
+                                    echo $_SESSION['success'];
+                                    unset($_SESSION['success']);
+                                }
                             ?>
-                        </div>
-                        <div class="hello">
-                            Ostatnie logowanie: <?= $_SESSION['user_last_login'] ?>
                         </div>
                     </div>
                 </div>

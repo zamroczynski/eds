@@ -3,7 +3,7 @@
     require_once 'database_connection.php';
     if (isset($_SESSION['logged']))
     {
-        header('Location: user_profile.php');
+        header('Location: main_page.php');
         exit();
     }
     $today = new DateTime();
